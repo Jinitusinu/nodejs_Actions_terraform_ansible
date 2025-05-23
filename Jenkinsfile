@@ -7,11 +7,12 @@ pipeline {
         SSH_KEY = credentials('deployer-key')  // SSH private key
     }
 
-    stages {
+	stages {
         stage('Checkout') {
-            steps { git url: 'https://github.com/SuchithraChandrasekaran/nodejs_service_deployment.git' }
+            steps {
+                git branch: 'main', url: 'https://github.com/SuchithraChandrasekaran/nodejs_service_deployment.git'
+            }
         }
-
         stage('Terraform Apply') {
             steps {
                 dir('terraform') {
