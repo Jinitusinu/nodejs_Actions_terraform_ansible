@@ -9,7 +9,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps { git url: 'https://github.com/YOUR_USER/YOUR_REPO.git' }
+            steps { git url: 'https://github.com/SuchithraChandrasekaran/nodejs_service_deployment.git' }
         }
 
         stage('Terraform Apply') {
