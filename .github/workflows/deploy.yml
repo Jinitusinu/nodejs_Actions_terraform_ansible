@@ -63,13 +63,18 @@ jobs:
 
       - name: Setup SSH
         run: |
-          echo "${{ secrets.HOST_SSH_KEY }}" > key.pem
-          chmod 600 key.pem
+          echo "${{ secrets.HOST_SSH_KEY }}" > id_rsa
+          chmod 600 id_rsa
+
+      - name: Disable SSH Host Key Checking
+        run: echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
       - name: Run Ansible Playbook
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
           export ANSIBLE_HOST_KEY_CHECKING=False
-          ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key key.pem
+          ansible-playbook ansible/node_service.yml \
+             -i ansible/inventory.ini \
+             --private-key id_rsa
 
