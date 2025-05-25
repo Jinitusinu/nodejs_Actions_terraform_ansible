@@ -42,12 +42,12 @@ jobs:
           terraform_version: 1.5.7
 
       - name: Terraform Init
-          run: terraform init
-              working-directory: ./terraform
+        run: terraform init
+        working-directory: ./terraform
 
       - name: Terraform Apply
-          run: terraform apply -auto-approve
-              working-directory: ./terraform
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
 
       - name: Install Ansible and SSH dependencies
         run: |
