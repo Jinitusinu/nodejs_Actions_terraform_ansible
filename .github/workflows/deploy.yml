@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
@@ -24,13 +24,18 @@ jobs:
       - name: Build (if applicable)
         run: npm run build
           
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
       - name: Terraform Init
         run: terraform init
-        working-directory: terraform
-          
+        working-directory: ./terraform  
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: terraform
+        working-directory: ./terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -43,4 +48,4 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
-          ansible-playbook ansible/playbook.yml -i "${{ secrets.HOST_IP }}," -u ${{ secrets.SSH_USER }} --private-key key.pem
+          ansible-playbook ansible/node_service.yml -i ansible/inventory.ini
