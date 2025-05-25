@@ -61,22 +61,14 @@ jobs:
           sudo apt-add-repository --yes --update ppa:ansible/ansible
           sudo apt-get install -y ansible sshpass python3-pip
 
-      - name: Setup SSH
+      - name: Setup SSH and Run Ansible
         run: |
-          echo "${{ secrets.HOST_SSH_KEY }}" > id_rsa
-          chmod 600 id_rsa
-
-      - name: Disable SSH host key checking
-        run: |
-            mkdir -p ~/.ssh
-            echo "StrictHostKeyChecking=no" >> ~/.ssh/config
-
-      - name: Run Ansible Playbook
-        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HOST_SSH_KEY }}" > ~/.ssh/key.pem
+          chmod 600 ~/.ssh/key.pem
+          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+          
           sudo apt-get update
           sudo apt-get install -y ansible
-          export ANSIBLE_HOST_KEY_CHECKING=False
-          ansible-playbook ansible/node_service.yml \
-             -i ansible/inventory.ini \
-             --private-key id_rsa
-
+          
+          ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key ~/.ssh/key.pem
