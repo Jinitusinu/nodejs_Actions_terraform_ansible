@@ -18,9 +18,17 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Set working directory
+        run: cd nodejs-app
+      
       - name: Install dependencies
+        working-directory: nodejs-app
         run: npm install
-          
+
+      - name: Build
+        working-directory: nodejs-app
+        run: npm run build
+
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
