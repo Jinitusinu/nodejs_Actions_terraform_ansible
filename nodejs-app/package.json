@@ -1,12 +1,13 @@
 {
-	"name": "nodejs-service",
+	"name": "nodejs_service",
 	"version": "1.0.0",
-  	"main": "index.js",
+	"main": "index.js",
 	"scripts": {
-		"start": "node index.js"
+		"start": "node index.js",
+		"build": "echo 'No build step needed'"
 	},
 	"dependencies": {
-		"express": "^4.19.2"
+		"express": "^4.18.2"
 	}
 }
 
