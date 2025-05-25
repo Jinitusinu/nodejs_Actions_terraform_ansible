@@ -34,3 +34,13 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Setup SSH
+        run: |
+          echo "${{ secrets.HOST_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          
+      - name: Run Ansible Playbook
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+          ansible-playbook ansible/playbook.yml -i "${{ secrets.HOST_IP }}," -u ${{ secrets.SSH_USER }} --private-key key.pem
