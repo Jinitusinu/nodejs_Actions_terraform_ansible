@@ -66,8 +66,10 @@ jobs:
           echo "${{ secrets.HOST_SSH_KEY }}" > id_rsa
           chmod 600 id_rsa
 
-      - name: Disable SSH Host Key Checking
-        run: echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+      - name: Disable SSH host key checking
+        run: |
+            mkdir -p ~/.ssh
+            echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
       - name: Run Ansible Playbook
         run: |
