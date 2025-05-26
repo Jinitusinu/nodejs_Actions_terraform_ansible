@@ -87,7 +87,7 @@ terraform apply
 
 ### GitHub Action: Workflow Triggered
 
-![Workflow Trigger](images/gitHubAction_success.png)
+![Workflow Trigger](images/gitHubAction_success.jpg)
 
 ## 5. Deployment URL
 
@@ -97,11 +97,11 @@ Node.js app will be available at:
 
 #### cURL cmd
 
-[## Deployment](images/nodejs_successful.jpg)
+![Deployment](images/nodejs_successful.jpg)
 
 #### Access through browser
 
-[## Deployment](images/nodejs_ui_successful.jpg)
+![Deployment](images/nodejs_ui_successful.jpg)
 
 ## 6. PM2 
 
@@ -120,28 +120,28 @@ It helps to keep our apps alive forever, reload them without downtime, and simpl
 
 ### Example PM2 commands:
 
-# Start the app
-pm2 start index.js
+##### Start the app
+        pm2 start index.js
 
-# List all running apps
-pm2 list
+##### List all running apps
+        pm2 list
 
-# View logs
-pm2 logs
+##### View logs
+        pm2 logs
 
-# Status the app
-pm2 status
+##### Status the app
+        pm2 status
 
-[## PM2Status](images/PM2_status.jpg)
+![PM2Status](images/PM2_status.jpg)
 
-# Restart your app
-pm2 restart index.js
+##### Restart your app
+        pm2 restart index.js
 
-# Save the current process list for startup
-pm2 save
+##### Save the current process list for startup
+        pm2 save
 
-# Generate startup script for server reboot
-pm2 startup
+##### Generate startup script for server reboot
+        pm2 startup
 
 
 PM2 is widely used in Node.js production deployments for its reliability and ease of use.
