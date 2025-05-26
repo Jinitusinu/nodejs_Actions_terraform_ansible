@@ -68,7 +68,4 @@ jobs:
           chmod 600 ~/.ssh/key.pem
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
           
-          sudo apt-get update
-          sudo apt-get install -y ansible
-          
           ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key ~/.ssh/key.pem
