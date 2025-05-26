@@ -21,14 +21,6 @@ jobs:
       - name: Set working directory
         run: cd nodejs-app
       
-      - name: Copy Node.js application code to remote server
-        ansible.builtin.copy:
-          src: /home/suchithra/nodejs_service_deployment/nodejs-app/
-          dest: /opt/nodejs-app/
-          owner: ubuntu
-          group: ubuntu
-          mode: 0755
-
       - name: Install dependencies
         working-directory: nodejs-app
         run: npm install
