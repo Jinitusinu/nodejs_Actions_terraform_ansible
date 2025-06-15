@@ -134,7 +134,7 @@ It helps to keep our apps alive forever, reload them without downtime, and simpl
 
 ![PM2Status](images/PM2_status.jpg)
 
-##### Restart your app
+##### Restart the app
         pm2 restart index.js
 
 ##### Save the current process list for startup
