@@ -16,11 +16,6 @@ variable "public_key" {
   type        = string
 }
 
-variable "ami_id" {
-  description = "AMI ID for EC2"
-  type        = string
-}
-
 variable "public_key_path" {
   description = "Path to the public SSH key"
   type        = string
