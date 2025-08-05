@@ -22,7 +22,7 @@ resource "aws_key_pair" "deployer" {
 }
 
 resource "aws_security_group" "node_sg" {
-  name   = "node_sg"
+  name   = "node_sg1"
   vpc_id = data.aws_vpc.default.id
 
   lifecycle {
