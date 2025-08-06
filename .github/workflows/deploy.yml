@@ -18,7 +18,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1  # make sure this matches your Terraform region
+          aws-region: ca-central-1
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
@@ -45,13 +45,12 @@ jobs:
           sudo apt-add-repository --yes --update ppa:ansible/ansible
           sudo apt-get install -y ansible sshpass python3-pip
 
-      - name: Add private key and known_hosts
+      - name: Add SSH Key and Add Host to Known Hosts
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/democentralcanada.pem
           chmod 600 ~/.ssh/democentralcanada.pem
-          # Add known host if static IP is used:
-          ssh-keyscan -H 15.223.146.233 >> ~/.ssh/known_hosts  # <-- Replace with your Elastic IP
+          ssh-keyscan -H 15.223.146.233 >> ~/.ssh/known_hosts  # <-- your existing Elastic IP
 
       - name: Run Ansible Playbook
         run: |
