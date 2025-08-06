@@ -49,13 +49,27 @@ jobs:
           TF_VAR_public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
           TF_VAR_key_name: "democentralcanada"  # your existing key name
 
+      - name: Debug Terraform Output
+        run: terraform output
+        working-directory: ./terraform          
+
       - name: Update Ansible Inventory with Terraform IP
         working-directory: ./terraform
+        id: get_ip
         run: |
           IP=$(terraform output -raw public_ip)
+          if [ -z "$IP" ]; then
+            echo "ERROR: No IP from Terraform."
+            exit 1
+          fi
+          echo "::set-output name=ip::$IP"
           echo "[nodejs-app]" > ../ansible/inventory.ini
           echo "$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/democentralcanada.pem" >> ../ansible/inventory.ini
 
+      - name: Add server SSH key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ steps.get_ip.outputs.ip }} >> ~/.ssh/known_hosts
 
       - name: Install Ansible and SSH dependencies
         run: |
@@ -66,10 +80,10 @@ jobs:
 
       - name: Setup SSH Key and Run Ansible
         run: |
-         mkdir -p ~/.ssh
-         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/democentralcanada.pem
-         chmod 600 ~/.ssh/democentralcanada.pem
-         echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/democentralcanada.pem
+          chmod 600 ~/.ssh/democentralcanada.pem
+          # Remove the StrictHostKeyChecking line below if using known_hosts
+          # echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-         ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key ~/.ssh/democentralcanada.pem
-
+          ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key ~/.ssh/democentralcanada.pem
