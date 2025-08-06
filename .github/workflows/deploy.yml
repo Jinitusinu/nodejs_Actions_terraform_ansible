@@ -44,13 +44,6 @@ jobs:
           sudo apt-add-repository --yes --update ppa:ansible/ansible
           sudo apt-get install -y ansible sshpass python3-pip
 
-      - name: Add SSH Key and Add Host to Known Hosts
-        run: |
-         mkdir -p $HOME/.ssh
-         printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/democentralcanada.pem
-         chmod 600 $HOME/.ssh/democentralcanada.pem
-         ssh-keyscan -H 15.223.146.233 >> $HOME/.ssh/known_hosts
-
 
       - name: Run Ansible Playbook
         run: |
