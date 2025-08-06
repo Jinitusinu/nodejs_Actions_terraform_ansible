@@ -16,9 +16,8 @@ provider "aws" {
   region = var.aws_region
 }
 
-resource "aws_key_pair" "deployer" {
-  key_name   = var.key_name
-  public_key = var.public_key
+data "aws_key_pair" "existing" {
+  key_name = var.key_name
 }
 
 resource "aws_security_group" "node_sg" {
@@ -65,8 +64,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "nodejs_app" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.micro"
-  # key_name               = aws_key_pair.deployer.key_name
-  key_name      = "democentralcanda"  
+  key_name               = data.aws_key_pair.existing.key_name
   vpc_security_group_ids = [aws_security_group.node_sg.id]
 
   tags = {
