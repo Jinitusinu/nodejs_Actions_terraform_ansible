@@ -1,5 +1,5 @@
 name: Setup AWS Credentials
-description: Configure AWS credentials using inputs
+description: Configure AWS credentials
 
 runs:
   using: composite
