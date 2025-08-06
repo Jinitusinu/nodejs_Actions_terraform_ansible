@@ -5,7 +5,7 @@ on:
     branches:
       - develop
 jobs:
-  terraform:
+  Terraform:
     runs-on: [self-hosted, linuxRunner]
 
     steps:
@@ -28,6 +28,7 @@ jobs:
           key_name: "democentralcanada"
   Ansible:
     runs-on: [self-hosted, linuxRunner]
+    needs: Terraform
     steps:
       - name: Setup and Run Ansible
         uses: ./custom-actions/ansible
@@ -36,6 +37,7 @@ jobs:
           remote_host_ip: "15.223.146.233"
   Docker:
     runs-on: [self-hosted, linuxRunner]
+    needs: Ansible
     steps:          
       - name: Run Docker Compose
         uses: ./custom-actions/docker-compose
