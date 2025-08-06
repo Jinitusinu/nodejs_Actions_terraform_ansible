@@ -47,14 +47,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_VAR_public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
-          TF_VAR_key_name: "democentralcanda"  # your existing key name
+          TF_VAR_key_name: "democentralcanada"  # your existing key name
 
       - name: Update Ansible Inventory with Terraform IP
         working-directory: ./terraform
         run: |
           IP=$(terraform output -raw public_ip)
           echo "[nodejs-app]" > ../ansible/inventory.ini
-          echo "$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/democentralcanda.pem" >> ../ansible/inventory.ini
+          echo "$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/democentralcanada.pem" >> ../ansible/inventory.ini
 
 
       - name: Install Ansible and SSH dependencies
