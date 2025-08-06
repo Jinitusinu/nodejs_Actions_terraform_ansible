@@ -53,18 +53,6 @@ jobs:
         run: terraform output
         working-directory: ./terraform          
 
-      - name: Update Ansible Inventory with Terraform IP
-        working-directory: ./terraform
-        id: get_ip
-        run: |
-         IP=$(terraform output -raw public_ip | tr -d '\r\n')
-         if [ -z "$IP" ]; then
-         echo "ERROR: No IP from Terraform."
-         exit 1
-         fi
-         echo "ip=$IP" >> $GITHUB_OUTPUT
-         echo "[nodejs-app]" > ../ansible/inventory.ini
-         echo "$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/democentralcanada.pem" >> ../ansible/inventory.ini
 
       - name: Add server SSH key to known_hosts
         run: |
