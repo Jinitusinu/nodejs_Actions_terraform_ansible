@@ -1,15 +1,19 @@
 name: Setup AWS Credentials
 description: Configure AWS credentials using inputs
 
+inputs:
+  aws_access_key_id:
+    required: true
+    description: AWS access key ID
+  aws_secret_access_key:
+    required: true
+    description: AWS secret access key
+  aws_region:
+    required: true
+    description: AWS region
+
 runs:
   using: composite
-  inputs:
-    aws_access_key_id:
-      required: true
-    aws_secret_access_key:
-      required: true
-    aws_region:
-      required: true
   steps:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
