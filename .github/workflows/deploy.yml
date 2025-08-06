@@ -66,10 +66,10 @@ jobs:
 
       - name: Setup SSH Key and Run Ansible
         run: |
-          mkdir -p ~/.ssh
-          # Copy your PEM key from repo or secrets to the runner's ~/.ssh directory
-          cp D:/new_project_windows_runner/.ssh/democentralcanda.pem ~/.ssh/democentralcanda.pem
-          chmod 600 ~/.ssh/democentralcanda.pem
-          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+         mkdir -p ~/.ssh
+         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/democentralcanada.pem
+         chmod 600 ~/.ssh/democentralcanada.pem
+         echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-          ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key ~/.ssh/democentralcanda.pem
+         ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key ~/.ssh/democentralcanada.pem
+
