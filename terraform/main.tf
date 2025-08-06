@@ -72,3 +72,7 @@ resource "aws_instance" "nodejs_app" {
   }
 }
 
+resource "aws_eip_association" "ansible_attach" {
+  instance_id   = aws_instance.nodejs_app.id
+  allocation_id = "eipalloc-0ae353f17264eefad"  # Replace this!
+}
