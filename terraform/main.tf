@@ -21,7 +21,7 @@ data "aws_key_pair" "existing" {
 }
 
 resource "aws_security_group" "node_sg" {
-  name   = "node_sg1"
+  name   = "node_sg"
   vpc_id = data.aws_vpc.default.id
 
   lifecycle {
