@@ -5,7 +5,7 @@ on:
     branches:
       - develop
 jobs:
-  deploy:
+  terraform:
     runs-on: [self-hosted, linuxRunner]
 
     steps:
@@ -26,13 +26,17 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
           key_name: "democentralcanada"
-
+  Ansible:
+    runs-on: [self-hosted, linuxRunner]
+    steps:
       - name: Setup and Run Ansible
         uses: ./custom-actions/ansible
         with:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           remote_host_ip: "15.223.146.233"
-          
+  Docker:
+    runs-on: [self-hosted, linuxRunner]
+    steps:          
       - name: Run Docker Compose
         uses: ./custom-actions/docker-compose
         with:
