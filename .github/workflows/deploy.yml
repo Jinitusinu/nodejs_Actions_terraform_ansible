@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-            
+
       - name: Install dependencies
         run: npm install
 
@@ -29,7 +29,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ca-central-1  # make sure this matches your Terraform region
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
@@ -47,32 +47,25 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_VAR_public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
-          TF_VAR_key_name: "democentralcanada"  # your existing key name
+          TF_VAR_key_name: "democentralcanada"
 
-      - name: Debug Terraform Output
-        run: terraform output
-        working-directory: ./terraform          
-
-
-      - name: Add server SSH key to known_hosts
-        run: |
-         mkdir -p ~/.ssh
-         ssh-keyscan -H ${{ steps.get_ip.outputs.ip }} >> ~/.ssh/known_hosts
-
-
-      - name: Install Ansible and SSH dependencies
+      - name: Install Ansible and dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y software-properties-common
           sudo apt-add-repository --yes --update ppa:ansible/ansible
           sudo apt-get install -y ansible sshpass python3-pip
 
-      - name: Setup SSH Key and Run Ansible
+      - name: Add private key and known_hosts
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/democentralcanada.pem
           chmod 600 ~/.ssh/democentralcanada.pem
-          # Remove the StrictHostKeyChecking line below if using known_hosts
-          # echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+          # Add known host if static IP is used:
+          ssh-keyscan -H 15.223.146.233 >> ~/.ssh/known_hosts  # <-- Replace with your Elastic IP
 
-          ansible-playbook ansible/node_service.yml -i ansible/inventory.ini --private-key ~/.ssh/democentralcanada.pem
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook ansible/node_service.yml \
+            -i ansible/inventory.ini \
+            --private-key ~/.ssh/democentralcanada.pem
