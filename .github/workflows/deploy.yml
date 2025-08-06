@@ -57,19 +57,21 @@ jobs:
         working-directory: ./terraform
         id: get_ip
         run: |
-          IP=$(terraform output -raw public_ip)
-          if [ -z "$IP" ]; then
-            echo "ERROR: No IP from Terraform."
-            exit 1
-          fi
-          echo "::set-output name=ip::$IP"
-          echo "[nodejs-app]" > ../ansible/inventory.ini
-          echo "$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/democentralcanada.pem" >> ../ansible/inventory.ini
+         IP=$(terraform output -raw public_ip)
+         if [ -z "$IP" ]; then
+         echo "ERROR: No IP from Terraform."
+         exit 1
+         fi
+         echo "ip=$IP" >> $GITHUB_OUTPUT
+         echo "[nodejs-app]" > ../ansible/inventory.ini
+         echo "$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/democentralcanada.pem" >> ../ansible/inventory.ini
+
 
       - name: Add server SSH key to known_hosts
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ steps.get_ip.outputs.ip }} >> ~/.ssh/known_hosts
+         mkdir -p ~/.ssh
+         ssh-keyscan -H ${{ steps.get_ip.outputs.ip }} >> ~/.ssh/known_hosts
+
 
       - name: Install Ansible and SSH dependencies
         run: |
