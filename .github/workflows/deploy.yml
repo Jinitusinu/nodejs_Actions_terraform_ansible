@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted, linuxRunner
+    runs-on: [self-hosted, linuxRunner]
 
     steps:
       - name: Checkout code
