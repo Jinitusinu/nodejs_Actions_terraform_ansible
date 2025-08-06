@@ -46,10 +46,11 @@ jobs:
 
       - name: Add SSH Key and Add Host to Known Hosts
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/democentralcanada.pem
-          chmod 600 ~/.ssh/democentralcanada.pem
-          ssh-keyscan -H 15.223.146.233 >> ~/.ssh/known_hosts  # <-- your existing Elastic IP
+         mkdir -p $HOME/.ssh
+         printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/democentralcanada.pem
+         chmod 600 $HOME/.ssh/democentralcanada.pem
+         ssh-keyscan -H 15.223.146.233 >> $HOME/.ssh/known_hosts
+
 
       - name: Run Ansible Playbook
         run: |
