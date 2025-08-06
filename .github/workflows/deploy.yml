@@ -32,3 +32,12 @@ jobs:
         with:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           remote_host_ip: "15.223.146.233"
+          
+      - name: Run Docker Compose
+        uses: ./custom-actions/docker-compose
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_host_ip: "15.223.146.233"
+
+
+          
