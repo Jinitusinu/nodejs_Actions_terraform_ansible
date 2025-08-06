@@ -7,12 +7,14 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  description = "EC2-key name"
+  description = "Existing EC2 key pair name"
   type        = string
 }
 
-variable "public_key" {
-  description = "SSH public key content"
+variable "public_key_path" {
+  description = "Path to the public key file"
   type        = string
+  default     = ""
 }
+
 
