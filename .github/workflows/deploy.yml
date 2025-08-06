@@ -53,6 +53,7 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
-          ansible-playbook ansible/node_service.yml \
-            -i ansible/inventory.ini \
-            --private-key ~/.ssh/democentralcanada.pem
+         ansible-playbook ansible/node_service.yml \
+         -i ansible/inventory.ini \
+         --private-key ~/.ssh/democentralcanada.pem
+             
