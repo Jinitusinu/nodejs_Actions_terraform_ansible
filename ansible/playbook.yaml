@@ -47,10 +47,14 @@
         state: started
         enabled: yes
 
-    - name: Install Docker Compose plugin
-      apt:
-        name: docker-compose-plugin
-        state: present
+    - name: Download Docker Compose binary
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Verify Docker Compose installation
+      command: docker-compose --version
 
     # Optional: Add user (e.g., ubuntu) to docker group to run docker without sudo
     - name: Add user to docker group
