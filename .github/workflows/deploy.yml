@@ -1,5 +1,4 @@
 name: Deploy Node.js App
-
 on:
   push:
     branches:
