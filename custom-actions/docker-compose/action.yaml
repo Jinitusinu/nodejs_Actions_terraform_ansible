@@ -25,8 +25,6 @@ runs:
           cd ~
           git clone https://github.com/Jinitusinu/nodejs_Actions_terraform_ansible.git node-app
           cd node-app
-          # Install dependencies (assuming package.json exists)
-          npm install
         EOF
 
     - name: Run Docker Compose
