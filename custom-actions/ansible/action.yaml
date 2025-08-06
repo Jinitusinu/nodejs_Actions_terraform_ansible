@@ -1,5 +1,12 @@
 name: Install and Run Ansible
 description: Install Ansible and run playbook
+
+inputs:
+  ssh_private_key:
+    required: true
+  remote_host_ip:
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -14,9 +21,9 @@ runs:
     - name: Add SSH Key and Host
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/democentralcanada.pem
+        echo "${{ inputs.ssh_private_key }}" > ~/.ssh/democentralcanada.pem
         chmod 600 ~/.ssh/democentralcanada.pem
-        ssh-keyscan -H 15.223.146.233 >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ inputs.remote_host_ip }} >> ~/.ssh/known_hosts
       shell: bash
 
     - name: Run Ansible Playbook
