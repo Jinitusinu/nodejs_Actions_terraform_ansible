@@ -1,0 +1,27 @@
+name: Run Selenium Tests
+description: Executes Selenium test with Mocha and generates Mochawesome report
+
+inputs:
+  ssh_private_key:
+    required: true
+  remote_host_ip:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add SSH key and known hosts
+      shell: bash
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ inputs.ssh_private_key }}" > ~/.ssh/selenium.pem
+        chmod 600 ~/.ssh/selenium.pem
+        ssh-keyscan -H ${{ inputs.remote_host_ip }} >> ~/.ssh/known_hosts
+
+    - name: Run Selenium Test on Remote EC2
+      shell: bash
+      run: |
+        ssh -i ~/.ssh/selenium.pem -o StrictHostKeyChecking=no ubuntu@${{ inputs.remote_host_ip }} << 'EOF'
+          cd ~/test-project
+          npx mocha test.js --reporter mochawesome
+        EOF
