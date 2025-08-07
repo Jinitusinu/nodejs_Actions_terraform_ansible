@@ -20,8 +20,8 @@ data "aws_key_pair" "existing" {
   key_name = var.key_name
 }
 
-resource "aws_security_group" "prod_node" {
-  name   = "prod_node"
+resource "aws_security_group" "develop_node" {
+  name   = "develop_node"
   vpc_id = data.aws_vpc.default.id
 
   lifecycle {
@@ -53,18 +53,18 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "aws_instance" "prod_node" {
+resource "aws_instance" "develop_node" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.micro"
   key_name               = data.aws_key_pair.existing.key_name
-  vpc_security_group_ids = [aws_security_group.prod_node.id]
+  vpc_security_group_ids = [aws_security_group.develop_node.id]
 
   tags = {
-    Name = "prod_node"
+    Name = "develop_node"
   }
 }
 
-resource "aws_eip_association" "prod_attach" {
-  instance_id   = aws_instance.prod_node.id
-  allocation_id = "eipalloc-063b94ab578a70780"  
+resource "aws_eip_association" "develop_attach" {
+  instance_id   = aws_instance.develop_node.id
+  allocation_id = "eipalloc-0ae353f17264eefad"  
 }
