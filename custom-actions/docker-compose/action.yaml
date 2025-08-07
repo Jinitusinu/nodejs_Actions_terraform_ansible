@@ -25,7 +25,6 @@ runs:
           cd ~
           git clone https://github.com/Jinitusinu/nodejs_Actions_terraform_ansible.git node-app
           cd node-app
-          git switch prod 
         EOF
 
     - name: Run Docker Compose
