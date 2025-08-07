@@ -56,7 +56,6 @@
     - name: Verify Docker Compose installation
       command: docker-compose --version
 
-    # Optional: Add user (e.g., ubuntu) to docker group to run docker without sudo
     - name: Add user to docker group
       user:
         name: "{{ ansible_user }}"
