@@ -6,9 +6,7 @@ terraform {
     }
   }
 }
-########################################
-# Look up the default VPC in the region
-########################################
+
 data "aws_vpc" "default" {
   default = true
 }
@@ -32,7 +30,7 @@ ingress {
   description = "Allow all traffic"
   from_port   = 0
   to_port     = 0
-  protocol    = "-1"       # -1 means all protocols
+  protocol    = "-1"      
   cidr_blocks = ["0.0.0.0/0"]
 }
 
@@ -46,7 +44,7 @@ ingress {
 
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical
+  owners      = ["099720109477"] 
   filter {
     name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
