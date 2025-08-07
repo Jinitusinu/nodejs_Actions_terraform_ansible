@@ -20,8 +20,8 @@ data "aws_key_pair" "existing" {
   key_name = var.key_name
 }
 
-resource "aws_security_group" "node_sg" {
-  name   = "node_sg"
+resource "aws_security_group" "prod_node" {
+  name   = "prod_node"
   vpc_id = data.aws_vpc.default.id
 
   lifecycle {
@@ -53,18 +53,18 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "aws_instance" "nodejs_app" {
+resource "aws_instance" "prod_node" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.micro"
   key_name               = data.aws_key_pair.existing.key_name
-  vpc_security_group_ids = [aws_security_group.node_sg.id]
+  vpc_security_group_ids = [aws_security_group.prod_node.id]
 
   tags = {
-    Name = "nodejs-app"
+    Name = "prod_node"
   }
 }
 
-resource "aws_eip_association" "ansible_attach" {
-  instance_id   = aws_instance.nodejs_app.id
-  allocation_id = "eipalloc-0ae353f17264eefad"  # Replace this!
+resource "aws_eip_association" "prod_attach" {
+  instance_id   = aws_instance.prod_node.id
+  allocation_id = "eipalloc-063b94ab578a70780"  
 }
