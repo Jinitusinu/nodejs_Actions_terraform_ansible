@@ -1,24 +1,25 @@
-name: Deploy Node.js App
-
+name: Deploy Node.js App in prod
 on:
   push:
     branches:
-      - develop
+      - prod
 jobs:
-  Terraform:
+  AWS:
     runs-on: [self-hosted, linuxRunner]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Setup AWS Credentials
         uses: ./custom-actions/aws-credentials
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ca-central-1
-
+          
+  Terraform:
+    runs-on: [self-hosted, linuxRunner]
+    needs: AWS
+    steps:
       - name: Setup Terraform and Apply Infra
         uses: ./custom-actions/terraform
         with:
@@ -26,6 +27,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
           key_name: "democentralcanada"
+          
   Ansible:
     runs-on: [self-hosted, linuxRunner]
     needs: Terraform
@@ -34,7 +36,8 @@ jobs:
         uses: ./custom-actions/ansible
         with:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          remote_host_ip: "15.223.146.233"
+          remote_host_ip: "16.52.62.154"
+          
   Docker:
     runs-on: [self-hosted, linuxRunner]
     needs: Ansible
@@ -43,7 +46,7 @@ jobs:
         uses: ./custom-actions/docker-compose
         with:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          remote_host_ip: "15.223.146.233"
+          remote_host_ip: "16.52.62.154"
 
       - name: Run Ansible Playbook
         run: |
@@ -51,4 +54,3 @@ jobs:
          -i ansible/inventory.ini \
          --private-key ~/.ssh/democentralcanada.pem
              
-
