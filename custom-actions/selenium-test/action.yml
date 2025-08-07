@@ -1,5 +1,5 @@
 name: Run Selenium Tests
-description: Executes Selenium test with Mocha and generates Mochawesome report and artifacts
+description: Executes Selenium test with Mocha and generates Mochawesome report
 
 inputs:
   ssh_private_key:
@@ -24,9 +24,9 @@ runs:
         ssh -i ~/.ssh/selenium.pem -o StrictHostKeyChecking=no ubuntu@${{ inputs.remote_host_ip }} << 'EOF'
           set -e
 
-          # Start Selenium standalone Chrome container if not running
-          if [ "$(sudo docker ps -q -f name=selenium-standalone)" = "" ]; then
-            if [ "$(sudo docker ps -aq -f status=exited -f name=selenium-standalone)" != "" ]; then
+          # Start Selenium container if not already running
+          if [ "\$(sudo docker ps -q -f name=selenium-standalone)" = "" ]; then
+            if [ "\$(sudo docker ps -aq -f status=exited -f name=selenium-standalone)" != "" ]; then
               echo "Starting existing selenium-standalone container..."
               sudo docker start selenium-standalone
             else
@@ -37,30 +37,31 @@ runs:
             echo "Selenium container already running."
           fi
 
-          # Move test.mjs from node-app to test-project if it exists
-          if [ -f ~/node-app/test.mjs ]; then
-            mv ~/node-app/test.mjs ~/test-project/
-            echo "test.mjs moved to test-project"
+          # Ensure test file exists
+          if [ -f ~/test-project/test.mjs ]; then
+            echo "test.mjs found in test-project"
           else
-            echo "test.mjs not found in node-app"
+            echo "test.mjs not found in test-project"
             exit 1
           fi
 
           # Run the test
           cd ~/test-project
-          ls -la
           npx mocha test.mjs --reporter mochawesome
+
+          # Archive results for download
+          mkdir -p mochawesome-artifacts
+          cp mochawesome-report/mochawesome.html mochawesome-artifacts/
+          cp mochawesome-report/mochawesome.json mochawesome-artifacts/
         EOF
 
-    - name: Copy Mochawesome Reports from Remote to Local
+    - name: Copy test results from EC2
       shell: bash
       run: |
-        mkdir -p mochawesome-report
-        scp -i ~/.ssh/selenium.pem -o StrictHostKeyChecking=no ubuntu@${{ inputs.remote_host_ip }}:~/test-project/mochawesome-report/mochawesome.json mochawesome-report/ || echo "No JSON report found"
-        scp -i ~/.ssh/selenium.pem -o StrictHostKeyChecking=no ubuntu@${{ inputs.remote_host_ip }}:~/test-project/mochawesome-report/mochawesome.html mochawesome-report/ || echo "No HTML report found"
+        scp -i ~/.ssh/selenium.pem -o StrictHostKeyChecking=no -r ubuntu@${{ inputs.remote_host_ip }}:~/test-project/mochawesome-artifacts ./mochawesome-artifacts
 
-    - name: Upload Mochawesome Reports as Artifact
+    - name: Upload mochawesome artifacts
       uses: actions/upload-artifact@v4
       with:
         name: mochawesome-report
-        path: mochawesome-report/
+        path: ./mochawesome-artifacts
