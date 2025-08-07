@@ -1,22 +1,59 @@
 name: Deploy Node.js App in staging 
-
 on:
   push:
     branches:
       - staging
 jobs:
+  AWS:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup AWS Credentials
+        uses: ./custom-actions/aws-credentials
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ca-central-1
+
+  Terraform:
+    runs-on: [self-hosted, linuxRunner]
+    needs: AWS
+    steps:
+      - name: Setup Terraform and Apply Infra
+        uses: ./custom-actions/terraform
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          public_key: ${{ secrets.TF_VAR_PUBLIC_KEY }}
+          key_name: "democentralcanada"
+
+  Ansible:
+    runs-on: [self-hosted, linuxRunner]
+    needs: Terraform
+    steps:
+      - name: Setup and Run Ansible
+        uses: ./custom-actions/ansible
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_host_ip: "15.156.144.245"
+
+  Docker:
+    runs-on: [self-hosted, linuxRunner]
+    needs: Ansible
+    steps:          
+      - name: Run Docker Compose
+        uses: ./custom-actions/docker-compose
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_host_ip: "15.156.144.245"
+
   SeleniumTest:
      runs-on: [self-hosted, linuxRunner]
+     needs: Docker
      steps:
-      - name: Create empty test report file
-        run: echo "" > mochawesome.html
-
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v4
+      - name: Run Selenium Tests
+        uses: ./custom-actions/selenium-test
         with:
-          name: selenium-test-report 
-          path: mochawesome.html
-      
-
-
-          
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_host_ip: "15.156.144.245"
