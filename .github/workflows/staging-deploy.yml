@@ -49,5 +49,16 @@ jobs:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           remote_host_ip: "15.156.144.245"
 
+  SeleniumTest:
+     runs-on: [self-hosted, linuxRunner]
+     needs: Docker
+     steps:
+      - name: Run Selenium Tests
+        uses: ./custom-actions/selenium-test
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_host_ip: "15.156.144.245"
+      
+
 
           
