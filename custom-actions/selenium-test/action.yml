@@ -38,6 +38,7 @@ runs:
           fi
 
           # Run the test
+          mv ~/node-app/test.mjs ~/test-project/
           cd ~/test-project
           npx mocha test.mjs --reporter mochawesome
         EOF
