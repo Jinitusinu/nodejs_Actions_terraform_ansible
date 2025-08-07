@@ -6,7 +6,7 @@ on:
       - staging
 jobs:
   AWS:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linuxRunner]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
           aws_region: ca-central-1
           
   Terraform:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linuxRunner]
     needs: AWS
     steps:
       - name: Setup Terraform and Apply Infra
@@ -30,7 +30,7 @@ jobs:
           key_name: "democentralcanada"
   
   Ansible:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linuxRunner]
     needs: Terraform
     steps:
       - name: Setup and Run Ansible
@@ -40,7 +40,7 @@ jobs:
           remote_host_ip: "15.156.144.245"
   
   Docker:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linuxRunner]
     needs: Ansible
     steps:          
       - name: Run Docker Compose
@@ -50,7 +50,7 @@ jobs:
           remote_host_ip: "15.156.144.245"
 
   SeleniumTest:
-     runs-on: ubuntu-latest
+     runs-on: [self-hosted, linuxRunner]
      needs: Docker
      steps:
       - name: Run Selenium Tests
