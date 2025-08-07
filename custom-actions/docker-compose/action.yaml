@@ -6,7 +6,6 @@ inputs:
     required: true
   remote_host_ip:
     required: true
-
 runs:
   using: "composite"
   steps:
