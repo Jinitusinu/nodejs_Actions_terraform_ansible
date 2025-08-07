@@ -1,0 +1,40 @@
+version: '3.8'  # Specify the version of Docker Compose
+
+services:
+  db:
+    image: postgres:15
+    container_name: wikijs_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wikijs
+      POSTGRES_PASSWORD: wikijs
+      POSTGRES_DB: wikijs
+    volumes:
+      - wikijs_db_data:/var/lib/postgresql/data
+    networks:
+      - app_net
+
+  wikijs:
+    image: requarks/wiki:2
+    container_name: wikijs_app
+    restart: unless-stopped
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: wikijs
+      DB_PASS: wikijs
+      DB_NAME: wikijs
+    ports:
+      - "8080:3000"
+    depends_on:
+      - db
+    networks:
+      - app_net
+
+volumes:
+  wikijs_db_data:
+
+networks:
+  app_net:
+    driver: bridge
