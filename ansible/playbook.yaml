@@ -16,7 +16,7 @@
           - unzip
           - ca-certificates
         state: present
-        
+
     - name: Add Google Chrome GPG key
       apt_key:
         url: https://dl.google.com/linux/linux_signing_key.pub
@@ -43,10 +43,34 @@
       environment:
         DEBIAN_FRONTEND: noninteractive
 
-    - name: Download ChromeDriver (match with installed Chrome version)
+    - name: Get installed Chrome version
+      command: google-chrome --version
+      register: chrome_version_output
+      changed_when: false
+
+    - name: Extract Chrome major version
+      set_fact:
+        chrome_major_version: "{{ chrome_version_output.stdout | regex_search('Google Chrome ([0-9]+)', '\\1') }}"
+
+    - name: Get latest compatible ChromeDriver version
+      uri:
+        url: "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{{ chrome_major_version }}"
+        return_content: yes
+      register: chromedriver_version_response
+
+    - name: Set ChromeDriver version fact
+      set_fact:
+        chromedriver_version: "{{ chromedriver_version_response.content }}"
+
+    - name: Construct ChromeDriver download URL
+      set_fact:
+        chromedriver_url: "https://chromedriver.storage.googleapis.com/{{ chromedriver_version }}/chromedriver_linux64.zip"
+
+    - name: Download ChromeDriver zip
       get_url:
-        url: https://chromedriver.storage.googleapis.com/126.0.6478.57/chromedriver_linux64.zip
+        url: "{{ chromedriver_url }}"
         dest: /tmp/chromedriver.zip
+        mode: '0644'
 
     - name: Unzip ChromeDriver
       unarchive:
@@ -63,7 +87,7 @@
         group: ubuntu
         mode: '0755'
 
-    - name: Initialize npm project (if not exists)
+    - name: Initialize npm project if not exists
       shell: |
         cd /home/ubuntu/test-project && npm init -y
       args:
