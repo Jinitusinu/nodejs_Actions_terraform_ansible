@@ -1,34 +1,49 @@
+---
+- name: Setup Node.js testing environment with Chrome and Selenium
+  hosts: all
+  become: yes
+
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install prerequisites
+      apt:
+        name:
+          - curl
+          - gnupg
+          - unzip
+          - ca-certificates
+        state: present
+
+    - name: Add Google Chrome GPG key
+      apt_key:
+        url: https://dl.google.com/linux/linux_signing_key.pub
+        state: present
+
+    - name: Add Google Chrome repository
+      apt_repository:
+        repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
+        state: present
+        filename: google-chrome
+
+  tasks:
     - name: Install Node.js and npm
       apt:
-        name: nodejs
+        name:
+          - nodejs
+          - npm
         state: present
 
-    - name: Install npm
-      apt:
-        name: npm
-        state: present
-
-    - name: Install Chrome browser (for headless testing)
+    - name: Install Google Chrome
       apt:
         name: google-chrome-stable
         state: present
-      vars:
-        ansible_debian_no_prompt: yes
       environment:
         DEBIAN_FRONTEND: noninteractive
-      pre_tasks:
-        - name: Add Google Chrome GPG key
-          apt_key:
-            url: https://dl.google.com/linux/linux_signing_key.pub
-            state: present
 
-        - name: Add Google Chrome repository
-          apt_repository:
-            repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
-            state: present
-            filename: google-chrome
-
-    - name: Install ChromeDriver (matching version)
+    - name: Download ChromeDriver (match with installed Chrome version)
       get_url:
         url: https://chromedriver.storage.googleapis.com/126.0.6478.57/chromedriver_linux64.zip
         dest: /tmp/chromedriver.zip
@@ -40,7 +55,7 @@
         remote_src: yes
         mode: '0755'
 
-    - name: Create project directory if not exists
+    - name: Ensure test project directory exists
       file:
         path: /home/ubuntu/test-project
         state: directory
@@ -48,7 +63,7 @@
         group: ubuntu
         mode: '0755'
 
-    - name: Create package.json if not exists
+    - name: Initialize npm project (if not exists)
       shell: |
         cd /home/ubuntu/test-project && npm init -y
       args:
@@ -58,3 +73,10 @@
       shell: |
         cd /home/ubuntu/test-project && \
         npm install --save-dev mocha chai selenium-webdriver mochawesome
+      args:
+        chdir: /home/ubuntu/test-project
+
+    - name: Verify Mocha installation
+      command: npx mocha --version
+      args:
+        chdir: /home/ubuntu/test-project
