@@ -1,9 +1,9 @@
-name: Deploy Node.js App in prod
+name: Deploy Node.js App in develop
 
 on:
   push:
     branches:
-      - prod
+      - develop
 jobs:
   AWS:
     runs-on: [self-hosted, linuxRunner]
@@ -37,7 +37,7 @@ jobs:
         uses: ./custom-actions/ansible
         with:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          remote_host_ip: "16.52.62.154"
+          remote_host_ip: "15.223.146.233"
           
   Docker:
     runs-on: [self-hosted, linuxRunner]
@@ -47,11 +47,7 @@ jobs:
         uses: ./custom-actions/docker-compose
         with:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          remote_host_ip: "16.52.62.154"
+          remote_host_ip: "15.223.146.233"
 
-      - name: Run Ansible Playbook
-        run: |
-         ansible-playbook ansible/node_service.yml \
-         -i ansible/inventory.ini \
-         --private-key ~/.ssh/democentralcanada.pem
+
              
